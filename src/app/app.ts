@@ -1,15 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
+import { TournamentCalendarComponent } from './components/tournament-calendar/tournament-calendar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [],
-  template: `
-    <h1>Welcome to {{ title() }}!</h1>
-
-    
-  `,
+  standalone: true,
+  imports: [TournamentCalendarComponent],
+  template: `<app-tournament-calendar></app-tournament-calendar>`,
   styles: [],
 })
-export class App {
-  protected readonly title = signal('sm-tournament');
-}
+export class App {}
