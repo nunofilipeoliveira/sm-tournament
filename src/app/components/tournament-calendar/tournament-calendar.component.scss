@@ -1,0 +1,53 @@
+.tournament-calendar {
+  margin: 1.5rem auto;
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.tournament-calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.05em;
+}
+
+.tournament-calendar th, .tournament-calendar td {
+  border: 1px solid #e0e0e0;
+  padding: 0.7em 0.3em;
+  text-align: center;
+}
+
+.tournament-calendar th {
+  background: #f1f5fb;
+  font-weight: 600;
+}
+
+.tournament-calendar tr.in-progress {
+  background: #e3fceb;
+  font-weight: bold;
+}
+
+.tournament-calendar tr.completed {
+  background: #f5f5f5;
+  color: #888;
+}
+
+.tournament-calendar tr:hover {
+  background: #e1ecfc;
+}
+
+@media (max-width: 600px) {
+  .tournament-calendar {
+    padding: 0.2rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .tournament-calendar table, .tournament-calendar th, .tournament-calendar td {
+    font-size: 0.95em;
+    padding: 0.4em 0.1em;
+  }
+}

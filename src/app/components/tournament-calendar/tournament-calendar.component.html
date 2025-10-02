@@ -1,0 +1,29 @@
+<div class="tournament-calendar">
+  <table>
+    <thead>
+      <tr>
+        <th>Hora</th>
+        <th>Pista</th>
+        <th>Visitada</th>
+        <th>Visitante</th>
+        <th>Resultado</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let match of (tournament$ | async)?.matches"
+          [ngClass]="{'in-progress': match.status === 'in-progress', 'completed': match.status === 'completed'}">
+        <td>{{match.time}}</td>
+        <td>{{match.court}}</td>
+        <td>{{match.homeTeam}}</td>
+        <td>{{match.awayTeam}}</td>
+        <td>{{match.result || '-'}}</td>
+        <td>
+          <span *ngIf="match.status === 'in-progress'">🟢 Em Jogo</span>
+          <span *ngIf="match.status === 'completed'">✅ Terminado</span>
+          <span *ngIf="match.status === 'scheduled'">⏳ Agendado</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

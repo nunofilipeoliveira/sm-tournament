@@ -1,0 +1,15 @@
+.app-header {
+  background: linear-gradient(90deg, #0d47a1 0%, #1976d2 100%);
+  color: #fff;
+  padding: 1.5rem 1rem 1rem 1rem;
+  text-align: center;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+}
+
+body, html {
+  background: #f1f5fb;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
