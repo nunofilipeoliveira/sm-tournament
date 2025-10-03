@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Tournament, Match, Team } from '../models/tournament.model';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class TournamentService {
+
   private initialData: Tournament = {
     teams: [
       { id: 1, name: 'Leões FC' },
@@ -20,7 +23,15 @@ export class TournamentService {
         homeTeam: 'Leões FC',
         awayTeam: 'Águias SC',
         status: 'completed',
-        result: '3-2'
+        result: '2-0',
+        homeTeamId: 0,
+        awayTeamId: 0,
+        win_teamid: 0,
+        lose_teamid: 0,
+        win_team: '',
+        lose_team: '',
+        idjogo_homeTeam: 0,
+        idjogo_awayTeam: 0
       },
       {
         id: 2,
@@ -30,7 +41,15 @@ export class TournamentService {
         homeTeam: 'Tigres FC',
         awayTeam: 'Lobos AC',
         status: 'completed',
-        result: '2-0'
+        result: '2-0',
+        homeTeamId: 0,
+        awayTeamId: 0,
+        win_teamid: 0,
+        lose_teamid: 0,
+        win_team: '',
+        lose_team: '',
+        idjogo_homeTeam: 0,
+        idjogo_awayTeam: 0
       },
       {
         id: 3,
@@ -39,7 +58,16 @@ export class TournamentService {
         round: '3º/4º Lugar',
         homeTeam: 'Águias SC',
         awayTeam: 'Lobos AC',
-        status: 'scheduled'
+        status: 'scheduled',
+        result: '2-0',
+        homeTeamId: 0,
+        awayTeamId: 0,
+        win_teamid: 0,
+        lose_teamid: 0,
+        win_team: '',
+        lose_team: '',
+        idjogo_homeTeam: 0,
+        idjogo_awayTeam: 0
       },
       {
         id: 4,
@@ -48,7 +76,16 @@ export class TournamentService {
         round: 'Final',
         homeTeam: 'Leões FC',
         awayTeam: 'Tigres FC',
-        status: 'in-progress'
+        status: 'in-progress',
+        result: '',
+        homeTeamId: 0,
+        awayTeamId: 0,
+        win_teamid: 0,
+        lose_teamid: 0,
+        win_team: '',
+        lose_team: '',
+        idjogo_homeTeam: 0,
+        idjogo_awayTeam: 0
       }
     ]
   };
@@ -56,19 +93,45 @@ export class TournamentService {
   private tournamentSubject = new BehaviorSubject<Tournament>(this.initialData);
   tournament$ = this.tournamentSubject.asObservable();
 
-  // ... métodos (como já tens)
+  constructor(private http: HttpClient) {}
 
+  /**
+   * Carrega todos os jogos do backend e atualiza o estado local.
+   */
+  loadAllGames() {
+    const headers = { 'Content-Type': 'application/json' };
+    const url = environment.apiUrl + "/sm/loadAllGames";
+    // O corpo está vazio, mas pode ser adaptado caso precises de enviar dados
+    return this.http.put<Array<Match>>(url, {}, { headers });
+  }
 
-  updateMatchResult(matchId: number, result: string, homeTeam?: string, awayTeam?: string) {
+  /**
+   * Atualiza o resultado de um jogo.
+   */
+  updateMatchResult(
+    matchId: number,
+    result: string,
+    homeTeam?: string,
+    awayTeam?: string
+  ) {
     const tournament = this.tournamentSubject.value;
     const matches: Match[] = tournament.matches.map(match =>
       match.id === matchId
-        ? { ...match, result, homeTeam: homeTeam || match.homeTeam, awayTeam: awayTeam || match.awayTeam, status: 'completed' as 'completed' }
+        ? {
+            ...match,
+            result,
+            homeTeam: homeTeam || match.homeTeam,
+            awayTeam: awayTeam || match.awayTeam,
+            status: 'completed' as 'completed'
+          }
         : match
     );
     this.tournamentSubject.next({ ...tournament, matches });
   }
 
+  /**
+   * Atualiza o status de um jogo.
+   */
   setMatchStatus(matchId: number, status: 'scheduled' | 'in-progress' | 'completed') {
     const tournament = this.tournamentSubject.value;
     const matches: Match[] = tournament.matches.map(match =>
@@ -78,4 +141,8 @@ export class TournamentService {
     );
     this.tournamentSubject.next({ ...tournament, matches });
   }
+
+  /**
+   * Adiciona outros métodos conforme necessário...
+   */
 }

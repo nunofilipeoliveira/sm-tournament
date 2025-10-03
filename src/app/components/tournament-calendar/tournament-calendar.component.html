@@ -1,29 +1,37 @@
-<div class="tournament-calendar">
-  <table>
-    <thead>
-      <tr>
-        <th>Hora</th>
-        <th>Pista</th>
-        <th>Visitada</th>
-        <th>Visitante</th>
-        <th>Resultado</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let match of (tournament$ | async)?.matches"
-          [ngClass]="{'in-progress': match.status === 'in-progress', 'completed': match.status === 'completed'}">
-        <td>{{match.time}}</td>
-        <td>{{match.court}}</td>
-        <td>{{match.homeTeam}}</td>
-        <td>{{match.awayTeam}}</td>
-        <td>{{match.result || '-'}}</td>
-        <td>
-          <span *ngIf="match.status === 'in-progress'">🟢 Em Jogo</span>
-          <span *ngIf="match.status === 'completed'">✅ Terminado</span>
-          <span *ngIf="match.status === 'scheduled'">⏳ Agendado</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="calendar-table-container">
+  <header>
+    <h1><span>Calendário Maia Hóquei Cup 2025</span></h1>
+  </header>
+  <div class="table-responsive">
+    <table class="calendar-table">
+      <thead>
+        <tr>
+          <th>Nº Jogo</th>
+          <th>Hora</th>
+          <th>Campo</th>
+          <th>Equipa 1</th>
+          <th>Res.</th>
+          <th>Equipa 2</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container >
+          <tr *ngFor="let match of games"
+              [ngClass]="{'in-progress': match.status === 'in-progress', 'completed': match.status === 'completed'}">
+            <td>
+              <span *ngIf="match.status === 'in-progress'" class="dot-blink"></span>
+              {{ match.id }}
+            </td>
+            <td>{{ match.time }}</td>
+            <td>{{ match.court }}</td>
+            <td>{{ match.homeTeam }}</td>
+            <td class="resultado">{{ match.result || '-' }}</td>
+            <td>{{ match.awayTeam }}</td>
+            <td>{{ match.round }}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
 </div>
