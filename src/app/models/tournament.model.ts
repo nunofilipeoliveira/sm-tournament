@@ -11,15 +11,12 @@ export interface Match {
   awayTeamId?: number; // ID do time visitante, opcional
   homeTeam?: Team | string; // string para "Vencedor 1", "Vencido 2", etc.
   awayTeam?: Team | string;
+  goalsHomeTeam?: number; // opcional, para jogos concluídos
+  goalsAwayTeam?: number; // opcional, para jogos concluídos
   status: 'scheduled' | 'in-progress' | 'completed';
   result?: string; // exemplo: "3-2"
   round: string; // exemplo: "Meia-final", "Final", etc.
-  win_teamid: number; // opcional, para jogos concluídos
-  lose_teamid: number; // opcional, para jogos concluídos
-  win_team: string; // opcional, para jogos concluídos
-  lose_team: string; // opcional, para jogos concluídos
-  idjogo_homeTeam:number; // opcional, para jogos concluídos
-  idjogo_awayTeam: number; // opcional, para jogos concluídos
+
 }
 
 export interface Tournament {

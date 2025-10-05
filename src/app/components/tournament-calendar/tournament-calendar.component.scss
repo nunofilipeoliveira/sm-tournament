@@ -105,3 +105,159 @@
     object-fit: contain;
   }
 }
+
+/* Estilo base dos botões */
+.calendar-table-container .calendar-table button {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.38rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin: 0.15rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Botões principais (ex: iniciar, guardar) */
+.calendar-table-container .calendar-table button.primary {
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  color: white;
+}
+.calendar-table-container .calendar-table button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(110, 142, 251, 0.4);
+}
+
+/* Botões de ação positiva (ex: +, adicionar golo) */
+.calendar-table-container .calendar-table button.success {
+  background: #21c77b;
+  color: white;
+}
+.calendar-table-container .calendar-table button.success:hover {
+  background: #1aa665;
+}
+
+/* Botões de ação negativa (ex: -, cancelar) */
+.calendar-table-container .calendar-table button.danger {
+  background: #ff1744;
+  color: white;
+}
+.calendar-table-container .calendar-table button.danger:hover {
+  background: #d90e36;
+}
+
+/* Botões secundários (ex: editar, reset) */
+.calendar-table-container .calendar-table button.secondary {
+  background: #f2f4fb;
+  color: #6e7a8a;
+}
+.calendar-table-container .calendar-table button.secondary:hover {
+  background: #e0e7ff;
+  color: #4a5568;
+}
+
+/* Para botões pequenos tipo + e - */
+.calendar-table-container .calendar-table button.small {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.78rem;
+  border-radius: 0.4rem;
+}
+
+/* Container ocupa todo o ecrã */
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.8); /* ligeiro fundo translúcido */
+  backdrop-filter: blur(3px); /* dá um toque moderno */
+  z-index: 9999;
+  gap: 12px;
+
+  font-family: "Inter", sans-serif;
+}
+
+/* Texto do loading */
+.loading-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  letter-spacing: 1px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Spinner */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-top: 5px solid #4a90e2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 12px rgba(74, 144, 226, 0.3);
+}
+
+/* Animações */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+
+/* Estilos para o footer mais sutil */
+.app-footer {
+  text-align: center;
+  padding: 0.5rem 0; /* Padding reduzido para maior compactação */
+  margin-top: 0.8rem; /* Espaçamento mínimo do conteúdo acima */
+  background-color: transparent; /* Sem fundo, integra-se ao container */
+  border-top: none; /* Remove a linha divisória para fluidez */
+  border-radius: 0; /* Sem arredondamento, para não destacar */
+  font-size: 0.8rem; /* Fonte menor e mais discreta */
+  color: #9ca3af; /* Cor mais clara e neutra, quase cinza suave */
+  opacity: 0.7; /* Leve transparência para sutileza adicional */
+}
+
+.app-footer p {
+  margin: 0;
+  padding: 0;
+}
+
+.app-footer a {
+  color: #a0aec0; /* Cor do link mais suave, derivada do gradiente mas atenuada */
+  text-decoration: none;
+  font-weight: 500; /* Peso médio, sem ênfase excessiva */
+  transition: color 0.2s ease; /* Transição suave no hover */
+}
+
+.app-footer a:hover {
+  color: #6e8efb; /* No hover, revela a cor principal para feedback sutil */
+  text-decoration: none; /* Mantém sem sublinhado, mas o hover muda a cor */
+}
+
+@media (max-width: 500px) {
+  .app-footer {
+    font-size: 0.75rem; /* Ainda menor em mobile para não ocupar espaço */
+    padding: 0.4rem 0;
+    margin-top: 0.5rem;
+  }
+}
+

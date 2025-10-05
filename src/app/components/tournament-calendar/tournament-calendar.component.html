@@ -2,36 +2,89 @@
   <header>
     <h1><span>Calendário Maia Hóquei Cup 2025</span></h1>
   </header>
-  <div class="table-responsive">
+
+  <!-- LOADING OVERLAY -->
+  <div *ngIf="loadingGames" class="loading-container">
+    <div class="spinner"></div>
+    <span class="loading-text">Loading...</span>
+  </div>
+
+  <!-- TABELA -->
+  <div class="table-responsive" *ngIf="!loadingGames">
     <table class="calendar-table">
       <thead>
         <tr>
           <th>Nº Jogo</th>
           <th>Hora</th>
-          <th>Campo</th>
+          
           <th>Equipa 1</th>
+          <th *ngIf="editMode">Golo</th>
           <th>Res.</th>
+          <th *ngIf="editMode">Golo</th>
           <th>Equipa 2</th>
           <th></th>
+          <th *ngIf="editMode">Ações</th>
         </tr>
       </thead>
+
       <tbody>
-        <ng-container >
-          <tr *ngFor="let match of games"
-              [ngClass]="{'in-progress': match.status === 'in-progress', 'completed': match.status === 'completed'}">
-            <td>
-              <span *ngIf="match.status === 'in-progress'" class="dot-blink"></span>
-              {{ match.id }}
-            </td>
-            <td>{{ match.time }}</td>
-            <td>{{ match.court }}</td>
-            <td>{{ match.homeTeam }}</td>
-            <td class="resultado">{{ match.result || '-' }}</td>
-            <td>{{ match.awayTeam }}</td>
-            <td>{{ match.round }}</td>
-          </tr>
-        </ng-container>
+        <tr *ngFor="let match of games"
+            [ngClass]="{'in-progress': match.status === 'in-progress', 'completed': match.status === 'completed'}">
+          <td>
+            <span *ngIf="match.status === 'in-progress'" class="dot-blink"></span>
+            {{ match.id }}
+          </td>
+          <td>{{ match.time }}</td>
+          
+          <td>{{ match.homeTeam }}</td>
+
+          <!-- Botões e resultado -->
+          <td *ngIf="editMode">
+            <button *ngIf="!editingRow[match.id]" class="small success" (click)="addHomeGoal(match)">+</button>
+            <button *ngIf="!editingRow[match.id]" class="small danger" (click)="subHomeGoal(match)">-</button>
+          </td>
+
+          <td *ngIf="!editMode || !editingRow[match.id]" class="resultado">{{ match.result }}</td>
+
+          <td *ngIf="editMode && editingRow[match.id]">
+            <input [(ngModel)]="match.goalsHomeTeam" type="text" style="width:50px" />
+            -
+            <input [(ngModel)]="match.goalsAwayTeam" type="text" style="width:50px" />
+          </td>
+
+          <td *ngIf="editMode">
+            <button *ngIf="!editingRow[match.id]" class="small success" (click)="addAwayGoal(match)">+</button>
+            <button *ngIf="!editingRow[match.id]" class="small danger" (click)="subAwayGoal(match)">-</button>
+          </td>
+
+          <td>{{ match.awayTeam }}</td>
+
+          <td *ngIf="editMode && editingRow[match.id]">
+            <select [(ngModel)]="tempStatus[match.id]">
+              <option value="scheduled">Agendado</option>
+              <option value="in-progress">Em curso</option>
+              <option value="completed">Terminado</option>
+            </select>
+          </td>
+
+          <td *ngIf="!editMode">
+            {{ match.round }}
+          </td>
+
+          <td *ngIf="editMode">
+            <button *ngIf="!editingRow[match.id]" class="primary" (click)="startMatch(match)">Iniciar Jogo</button>
+            <button *ngIf="!editingRow[match.id]" class="danger" (click)="endMatch(match)">Terminar Jogo</button>
+            <button *ngIf="!editingRow[match.id]" class="secondary" (click)="startEdit(match)">Editar</button>
+
+            <button *ngIf="editingRow[match.id]" class="primary" (click)="saveEdit(match)">Guardar</button>
+            <button *ngIf="editingRow[match.id]" class="danger" (click)="cancelEdit(match)">Cancelar</button>
+            <button *ngIf="editingRow[match.id]" class="secondary" (click)="reset(match)">Reset</button>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
+    <footer class="app-footer">
+   
+  </footer>
 </div>
