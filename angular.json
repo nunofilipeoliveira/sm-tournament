@@ -50,6 +50,10 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "src/assets"
+              },
+              {
+                "glob": "**/*",
                 "input": "public"
               }
             ],
@@ -67,8 +71,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "12kB",
+                  "maximumError": "30kB"
                 }
               ],
               "outputHashing": "all"

@@ -1,90 +1,182 @@
 <div class="calendar-table-container">
-  <header>
-    <h1><span>Calendário Maia Hóquei Cup 2025</span></h1>
+
+  <!-- ─── Header ─────────────────────────────────────────────────────────── -->
+  <header class="calendar-header">
+    <div class="calendar-header-content">
+      <img src="images/TSJ26.png" alt="Torneio São João 2026" class="header-logo" />
+      <span class="eyebrow">Calendário de Jogos</span>
+      <h1>Torneio São João 2026</h1>
+      <p>Organização Clube Infante Sagres</p>
+    </div>
   </header>
 
-  <!-- LOADING OVERLAY -->
+  <!-- ─── Loading ────────────────────────────────────────────────────────── -->
   <div *ngIf="loadingGames" class="loading-container">
     <div class="spinner"></div>
-    <span class="loading-text">Loading...</span>
+    <span class="loading-text">A carregar jogos...</span>
   </div>
 
-  <!-- TABELA -->
-  <div class="table-responsive" *ngIf="!loadingGames">
-    <table class="calendar-table">
-      <thead>
-        <tr>
-          <th>Nº Jogo</th>
-          <th>Hora</th>
-          
-          <th>Equipa 1</th>
-          <th *ngIf="editMode">Golo</th>
-          <th>Res.</th>
-          <th *ngIf="editMode">Golo</th>
-          <th>Equipa 2</th>
-          <th></th>
-          <th *ngIf="editMode">Ações</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let match of games"
-            [ngClass]="{'in-progress': match.status === 'in-progress', 'completed': match.status === 'completed'}">
-          <td>
-            <span *ngIf="match.status === 'in-progress'" class="dot-blink"></span>
-            {{ match.id }}
-          </td>
-          <td>{{ match.time }}</td>
-          
-          <td>{{ match.homeTeam }}</td>
-
-          <!-- Botões e resultado -->
-          <td *ngIf="editMode">
-            <button *ngIf="!editingRow[match.id]" class="small success" (click)="addHomeGoal(match)">+</button>
-            <button *ngIf="!editingRow[match.id]" class="small danger" (click)="subHomeGoal(match)">-</button>
-          </td>
-
-          <td *ngIf="!editMode || !editingRow[match.id]" class="resultado">{{ match.result }}</td>
-
-          <td *ngIf="editMode && editingRow[match.id]">
-            <input [(ngModel)]="match.goalsHomeTeam" type="text" style="width:50px" />
-            -
-            <input [(ngModel)]="match.goalsAwayTeam" type="text" style="width:50px" />
-          </td>
-
-          <td *ngIf="editMode">
-            <button *ngIf="!editingRow[match.id]" class="small success" (click)="addAwayGoal(match)">+</button>
-            <button *ngIf="!editingRow[match.id]" class="small danger" (click)="subAwayGoal(match)">-</button>
-          </td>
-
-          <td>{{ match.awayTeam }}</td>
-
-          <td *ngIf="editMode && editingRow[match.id]">
-            <select [(ngModel)]="tempStatus[match.id]">
-              <option value="scheduled">Agendado</option>
-              <option value="in-progress">Em curso</option>
-              <option value="completed">Terminado</option>
-            </select>
-          </td>
-
-          <td *ngIf="!editMode">
-            {{ match.round }}
-          </td>
-
-          <td *ngIf="editMode">
-            <button *ngIf="!editingRow[match.id]" class="primary" (click)="startMatch(match)">Iniciar Jogo</button>
-            <button *ngIf="!editingRow[match.id]" class="danger" (click)="endMatch(match)">Terminar Jogo</button>
-            <button *ngIf="!editingRow[match.id]" class="secondary" (click)="startEdit(match)">Editar</button>
-
-            <button *ngIf="editingRow[match.id]" class="primary" (click)="saveEdit(match)">Guardar</button>
-            <button *ngIf="editingRow[match.id]" class="danger" (click)="cancelEdit(match)">Cancelar</button>
-            <button *ngIf="editingRow[match.id]" class="secondary" (click)="reset(match)">Reset</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+   <!-- ─── reset all ────────────────────────────────────────────────────────── -->
+  <div *ngIf="editMode">
+    
+    <button class="danger"    (click)="resetAll()">Reset all</button>
   </div>
-    <footer class="app-footer">
-   
-  </footer>
+
+  <!-- ─── Schedule ───────────────────────────────────────────────────────── -->
+  <div class="schedule" *ngIf="!loadingGames">
+
+    <div *ngIf="!gamesByDate.length" class="empty-state">
+      <strong>Não existem jogos agendados</strong>
+      <p>O calendário será atualizado assim que houver jogos disponíveis.</p>
+    </div>
+
+    <section class="date-group" *ngFor="let group of gamesByDate; trackBy: trackByDateKey">
+
+      <!-- Separador de data -->
+      <div class="date-divider">
+        <div class="date-divider-day">
+          <span class="weekday-label">{{ group.weekdayLabel }}</span>
+        </div>
+        <div class="date-divider-info">
+          <span class="full-date-label">{{ group.dateLabel }}</span>
+        </div>
+        <span class="games-badge">
+          {{ group.matches.length }}<span class="games-badge-label">{{ group.matches.length === 1 ? 'jogo' : 'jogos' }}</span>
+        </span>
+      </div>
+
+      <!-- Tabela de jogos -->
+      <div class="table-responsive">
+        <table class="calendar-table" [class.edit-mode]="editMode">
+
+          <thead>
+            <tr>
+              <th class="col-time">Hora</th>
+              <th class="col-tier">Esc.</th>
+              <th class="col-home">Casa</th>
+              <th *ngIf="editMode" class="col-goal"></th>
+              <th class="col-result">Res.</th>
+              <th *ngIf="editMode" class="col-goal"></th>
+              <th class="col-away">Fora</th>
+              <th class="col-round">Jorn.</th>
+              <th *ngIf="editMode" class="col-actions">Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let match of group.matches; trackBy: trackByMatch"
+                [ngClass]="{
+                  'in-progress': match.status === 'in-progress',
+                  'completed':   match.status === 'completed',
+                  'no-team-row': !getTeamName(match.homeTeam)
+                }">
+
+              <!-- Hora -->
+              <td class="col-time time-cell">
+                {{ match.time || '--:--' }}
+                <span *ngIf="match.status === 'in-progress'" class="dot-blink"></span>
+              </td>
+
+              <!-- Escalão -->
+              <td class="col-tier category-cell"
+                  [class.no-match]="!getTeamName(match.homeTeam)">
+                {{ match.tier || '-' }}
+              </td>
+
+              <!-- Células só visíveis quando há equipa da casa -->
+              <ng-container *ngIf="getTeamName(match.homeTeam)">
+
+                <!-- Equipa Casa -->
+                <td class="col-home team-cell team-home">
+                  <span class="team-name">{{ getTeamName(match.homeTeam) }}</span>
+                  <img *ngIf="match.homeTeamId"
+                       [src]="'logos/clube_' + match.homeTeamId + '.png'"
+                       onerror="this.onerror=null; this.src='logos/clube_1.png'"
+                       class="team-logo" />
+                </td>
+
+                <!-- Golo Casa (editMode) -->
+                <td *ngIf="editMode" class="col-goal goal-cell">
+                  <button *ngIf="!editingRow[match.id]" class="small success" (click)="addHomeGoal(match)">+</button>
+                  <button *ngIf="!editingRow[match.id]" class="small danger"  (click)="subHomeGoal(match)">-</button>
+                </td>
+
+                <!-- Resultado (vista normal) -->
+                <td *ngIf="!editMode || !editingRow[match.id]" class="col-result resultado">
+                  {{ match.result || '-' }}
+                </td>
+
+                <!-- Resultado (edição inline) -->
+                <td *ngIf="editMode && editingRow[match.id]" class="col-result score-editor">
+                  <input [(ngModel)]="match.goalsHomeTeam" type="text" />
+                  <span class="score-separator">-</span>
+                  <input [(ngModel)]="match.goalsAwayTeam" type="text" />
+                </td>
+
+                <!-- Golo Fora (editMode) -->
+                <td *ngIf="editMode" class="col-goal goal-cell">
+                  <button *ngIf="!editingRow[match.id]" class="small success" (click)="addAwayGoal(match)">+</button>
+                  <button *ngIf="!editingRow[match.id]" class="small danger"  (click)="subAwayGoal(match)">-</button>
+                </td>
+
+                <!-- Equipa Fora -->
+                <td class="col-away team-cell team-away">
+                  <img *ngIf="match.awayTeamId"
+                       [src]="'logos/clube_' + match.awayTeamId + '.png'"
+                       onerror="this.onerror=null; this.src='logos/clube_1.png'"
+                       class="team-logo" />
+                  <span class="team-name">{{ getTeamName(match.awayTeam) }}</span>
+                </td>
+
+                <!-- Jornada (vista normal) -->
+                <td *ngIf="!editMode" class="col-round round-cell">{{ match.round || '-' }}</td>
+
+                <!-- Jornada (edição — status select) -->
+                <td *ngIf="editMode && editingRow[match.id]" class="col-round status-cell">
+                  <select [(ngModel)]="tempStatus[match.id]">
+                    <option value="scheduled">Agendado</option>
+                    <option value="in-progress">Em curso</option>
+                    <option value="completed">Terminado</option>
+                  </select>
+                </td>
+                <td *ngIf="editMode && !editingRow[match.id]" class="col-round round-cell">{{ match.round || '-' }}</td>
+
+                <!-- Ações (editMode) -->
+                <td *ngIf="editMode" class="col-actions actions-cell">
+                  <ng-container *ngIf="!editingRow[match.id]">
+                    <button class="primary"   (click)="startMatch(match)">Iniciar</button>
+                    <button class="danger"    (click)="endMatch(match)">Terminar</button>
+                    <button class="secondary" (click)="startEdit(match)">Editar</button>
+                  </ng-container>
+                  <ng-container *ngIf="editingRow[match.id]">
+                    <button class="primary"   (click)="saveEdit(match)">Guardar</button>
+                    <button class="danger"    (click)="cancelEdit(match)">Cancelar</button>
+                    <button class="secondary" (click)="reset(match)">Reset</button>
+                  </ng-container>
+                </td>
+
+              </ng-container>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </section>
+  </div>
+
+<footer class="app-footer">
+  <div class="footer-content">
+    
+    <div class="footer-brand">
+      <span class="footer-title"><a href="https://sm.com.pt" target="_blank"><img src="favicon.ico" alt="SM" class="team-logo" /></a></span>
+      <span class="footer-title">Sports Manager</span>
+      <span class="footer-divider"></span>
+      <span class="footer-copy">© 2026 Todos os direitos reservados</span>
+    </div>
+
+    
+
+  </div>
+</footer>
 </div>

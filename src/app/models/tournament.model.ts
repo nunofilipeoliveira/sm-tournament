@@ -5,6 +5,7 @@ export interface Team {
 
 export interface Match {
   id: number;
+  tier: string; // exemplo: Sub-9, Sub-11, Sub-13, etc.
   court: number;
   time: string; // formato HH:mm
   homeTeamId?: number; // ID do time da casa, opcional
@@ -16,6 +17,10 @@ export interface Match {
   status: 'scheduled' | 'in-progress' | 'completed';
   result?: string; // exemplo: "3-2"
   round: string; // exemplo: "Meia-final", "Final", etc.
+  date: string; // formato YYYY-MM-DD
+  round_number?: string;
+  round_action?: string;
+  
 
 }
 

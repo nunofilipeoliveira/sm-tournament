@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { TournamentCalendarComponent } from './components/tournament-calendar/tournament-calendar.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TournamentCalendarComponent],
-  template: `<app-tournament-calendar></app-tournament-calendar>`,
+  imports: [RouterOutlet],
+  template: `<router-outlet></router-outlet>`,
   styles: [],
 })
 export class App {}
