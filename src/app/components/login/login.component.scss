@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap');
+
+// ─── Brand Tokens ──────────────────────────────────────────────────────────
+$tsj-teal:        #1a9e8e;
+$tsj-teal-dark:   #137166;
+$tsj-teal-light:  #d4f0ec;
+$tsj-red:         #c0392b;
+$tsj-red-light:   #fdecea;
+$tsj-blue:        #1a3acf;
+$tsj-blue-light:  #e8edff;
+$color-bg:        #f2f7f6;
+$color-surface:   #ffffff;
+$color-border:    #d0e8e4;
+$color-text:      #122b28;
+$color-muted:     #6b8a85;
+$color-accent:    $tsj-teal;
+$color-danger:    $tsj-red;
+
+// ─── Login Container ───────────────────────────────────────────────────────
+.login-container {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, $tsj-teal-dark 0%, $tsj-teal 55%, #22b5a2 100%);
+  padding: 1rem;
+  position: relative;
+
+  // Padrão hexagonal subtil
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(255,255,255,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(192,57,43,0.18) 0%, transparent 45%);
+    pointer-events: none;
+  }
+}
+
+// ─── Login Card ────────────────────────────────────────────────────────────
+.login-card {
+  background: $color-surface;
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+// ─── Login Header ──────────────────────────────────────────────────────────
+.login-header {
+  background: linear-gradient(135deg, #f5faf9, #e8f5f3);
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+  border-bottom: 2px solid $color-border;
+
+  .login-logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 4px 12px rgba(26, 158, 142, 0.2));
+  }
+
+  h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: $tsj-teal-dark;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: $color-muted;
+    font-weight: 500;
+  }
+}
+
+// ─── Login Form ────────────────────────────────────────────────────────────
+.login-form {
+  padding: 2rem 1.5rem;
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $color-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: $color-text;
+      background: #f7faf9;
+      border: 2px solid $color-border;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        background: $color-surface;
+        border-color: $tsj-teal;
+        box-shadow: 0 0 0 3px rgba(26, 158, 142, 0.1);
+      }
+
+      &::placeholder {
+        color: #a8c2be;
+      }
+    }
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #fff5f5, #ffeaea);
+    border-left: 4px solid $tsj-red;
+    color: $tsj-red;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    animation: shake 0.4s ease;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: white;
+    background: linear-gradient(135deg, $tsj-teal-dark, $tsj-teal);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(26, 158, 142, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, darken($tsj-teal-dark, 5%), darken($tsj-teal, 5%));
+      box-shadow: 0 6px 16px rgba(26, 158, 142, 0.4);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(26, 158, 142, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+// ─── Animations ────────────────────────────────────────────────────────────
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+// ─── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 500px) {
+  .login-card {
+    border-radius: 0.75rem;
+  }
+
+  .login-header {
+    padding: 1.5rem 1rem 1rem;
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+    }
+  }
+
+  .login-form {
+    padding: 1.5rem 1rem;
+
+    .form-group {
+      margin-bottom: 1.2rem;
+
+      input {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    .btn-login {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.9rem;
+    }
+  }
+}

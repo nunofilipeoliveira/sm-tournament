@@ -11,5 +11,7 @@ export const environment = {
   apiUrl:'http://localhost:8080',
   tenant_id: 1, // Adicionando tenant_id como parte do ambiente
   root:'',
-  clube_id: 1
+  clube_id: 1,
+  adminUser: 'admin',
+  adminPassword: 'tsj26'
 };

@@ -138,9 +138,16 @@ $color-danger:    $tsj-red;
   letter-spacing: 0.01em;
 }
 
-.btn-reset-all {
+.admin-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.btn-reset-all,
+.btn-logout {
   font-family: 'Montserrat', sans-serif;
-  background: linear-gradient(135deg, $tsj-red 0%, darken($tsj-red, 10%) 100%);
   color: white;
   border: none;
   border-radius: 0.6rem;
@@ -152,11 +159,28 @@ $color-danger:    $tsj-red;
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  .btn-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .btn-text {
+    line-height: 1;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-reset-all {
+  background: linear-gradient(135deg, $tsj-red 0%, darken($tsj-red, 10%) 100%);
   box-shadow: 
     0 3px 12px rgba(192, 57, 43, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
 
   &:hover {
     transform: translateY(-2px);
@@ -167,19 +191,30 @@ $color-danger:    $tsj-red;
   }
 
   &:active {
-    transform: translateY(0);
     box-shadow: 
       0 2px 8px rgba(192, 57, 43, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
+}
 
-  .btn-icon {
-    font-size: 1.1rem;
-    line-height: 1;
+.btn-logout {
+  background: linear-gradient(135deg, #5a6c7d 0%, darken(#5a6c7d, 10%) 100%);
+  box-shadow: 
+    0 3px 12px rgba(90, 108, 125, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 20px rgba(90, 108, 125, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, darken(#5a6c7d, 5%) 0%, darken(#5a6c7d, 15%) 100%);
   }
 
-  .btn-text {
-    line-height: 1;
+  &:active {
+    box-shadow: 
+      0 2px 8px rgba(90, 108, 125, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -285,7 +320,7 @@ $color-danger:    $tsj-red;
 
   thead tr {
     display: grid;
-    grid-template-columns: 36px 42px 1fr 46px 1fr 52px;
+    grid-template-columns: 36px 42px 1fr 46px 1fr 68px;
     align-items: center;
     background: linear-gradient(90deg, #e8f5f3, #f0faf8);
     border-bottom: 2px solid $color-border;
@@ -310,7 +345,7 @@ $color-danger:    $tsj-red;
 
   tbody tr {
     display: grid;
-    grid-template-columns: 36px 42px 1fr 46px 1fr 52px;
+    grid-template-columns: 36px 42px 1fr 46px 1fr 68px;
     align-items: center;
     border-bottom: 1px solid #edf5f3;
     transition: background 0.15s;
@@ -462,10 +497,10 @@ $color-danger:    $tsj-red;
   // Em modo edição, a tabela tem mais colunas
   &.edit-mode {
     thead tr {
-      grid-template-columns: 36px 42px 1fr 38px 46px 38px 1fr 52px minmax(190px, auto);
+      grid-template-columns: 36px 42px 1fr 38px 46px 38px 1fr 68px minmax(190px, auto);
     }
     tbody tr {
-      grid-template-columns: 36px 42px 1fr 38px 46px 38px 1fr 52px minmax(190px, auto);
+      grid-template-columns: 36px 42px 1fr 38px 46px 38px 1fr 68px minmax(190px, auto);
     }
     tbody tr.no-team-row {
       grid-template-columns: 36px 1fr;
@@ -900,7 +935,7 @@ $color-danger:    $tsj-red;
 
 // ─── Round e Ícone de Tabela ───────────────────────────────────────────────
 .round-cell {
-  padding: 0.3rem 0.15rem !important;
+  padding: 0.3rem 0.1rem !important;
 }
 
 .round-wrapper {
@@ -913,7 +948,7 @@ $color-danger:    $tsj-red;
 }
 
 .round-label {
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   font-weight: 700;
   color: $color-text;
   white-space: nowrap;
@@ -921,8 +956,8 @@ $color-danger:    $tsj-red;
   overflow: hidden;
   max-width: 100%;
   text-align: center;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
 }
 
 .btn-table-icon {
