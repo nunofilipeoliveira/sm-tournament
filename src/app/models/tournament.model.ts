@@ -20,6 +20,7 @@ export interface Match {
   date: string; // formato YYYY-MM-DD
   round_number?: string;
   round_action?: string;
+  hasTable?: boolean; // Indica se o jogo possui tabela associada
   
 
 }
