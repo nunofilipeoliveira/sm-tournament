@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TournamentService } from '../../services/tournament.service';
+import { AuthService } from '../../services/auth.service';
 import { Match, Team, Classificacao } from '../../models/tournament.model';
+import { LoginComponent } from '../login/login.component';
 
 interface GameDateGroup {
   dateKey: string;
@@ -15,7 +17,7 @@ interface GameDateGroup {
 @Component({
   selector: 'app-tournament-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoginComponent],
   templateUrl: './tournament-calendar.component.html',
   styleUrls: ['./tournament-calendar.component.scss']
 })
@@ -39,7 +41,8 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
 
   constructor(
     private tournamentService: TournamentService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -395,5 +398,14 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
     this.showClassificacaoModal = false;
     this.classificacao = [];
     this.classificacaoRound = '';
+  }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    window.location.reload();
   }
 }

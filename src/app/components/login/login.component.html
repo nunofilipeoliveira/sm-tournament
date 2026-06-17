@@ -1,0 +1,44 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="images/TSJ26.png" alt="TSJ26" class="login-logo" />
+      <h1>Área de Administração</h1>
+      <p>Torneio São João 2026</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Utilizador</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="username"
+          placeholder="Digite o utilizador"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Palavra-passe</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Digite a palavra-passe"
+          required
+        />
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-login">
+        Entrar
+      </button>
+    </form>
+  </div>
+</div>

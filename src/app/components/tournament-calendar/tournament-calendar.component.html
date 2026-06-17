@@ -1,5 +1,11 @@
 <div class="calendar-table-container">
 
+  <!-- ─── Login (modo edição não autenticado) ───────────────────────────── -->
+  <app-login *ngIf="editMode && !isAuthenticated()"></app-login>
+
+  <!-- ─── Conteúdo principal (visualização ou edição autenticada) ────────── -->
+  <ng-container *ngIf="!editMode || isAuthenticated()">
+
   <!-- ─── Header ─────────────────────────────────────────────────────────── -->
   <header class="calendar-header">
     <div class="calendar-header-content">
@@ -23,10 +29,16 @@
         <span class="admin-badge">⚙️ Modo Edição</span>
         <span class="admin-toolbar-text">Está a gerir os jogos do torneio</span>
       </div>
-      <button class="btn-reset-all" (click)="resetAll()">
-        <span class="btn-icon">🔄</span>
-        <span class="btn-text">Reset Completo</span>
-      </button>
+      <div class="admin-toolbar-actions">
+        <button class="btn-reset-all" (click)="resetAll()">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Reset Completo</span>
+        </button>
+        <button class="btn-logout" (click)="logout()">
+          <span class="btn-icon">🚪</span>
+          <span class="btn-text">Sair</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -296,4 +308,8 @@
 
   </div>
 </footer>
+
+  </ng-container>
+  <!-- Fim do ng-container -->
+
 </div>
