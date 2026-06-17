@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TournamentService } from '../../services/tournament.service';
-import { Match, Team } from '../../models/tournament.model';
+import { Match, Team, Classificacao } from '../../models/tournament.model';
 
 interface GameDateGroup {
   dateKey: string;
@@ -19,7 +19,7 @@ interface GameDateGroup {
   templateUrl: './tournament-calendar.component.html',
   styleUrls: ['./tournament-calendar.component.scss']
 })
-export class TournamentCalendarComponent implements OnInit {
+export class TournamentCalendarComponent implements OnInit, OnDestroy {
   games: Match[] = [];
   gamesByDate: GameDateGroup[] = [];
   editMode = false;
@@ -28,6 +28,14 @@ export class TournamentCalendarComponent implements OnInit {
   tempStatus: { [id: number]: Match['status'] } = {};
 
   loadingGames = true;
+  private refreshInterval: any = null;
+  private readonly REFRESH_INTERVAL_MS = 5000; // 5 segundos
+
+  // Modal de classificação
+  showClassificacaoModal = false;
+  classificacao: Classificacao[] = [];
+  classificacaoRound = '';
+  loadingClassificacao = false;
 
   constructor(
     private tournamentService: TournamentService,
@@ -37,13 +45,28 @@ export class TournamentCalendarComponent implements OnInit {
   ngOnInit() {
     
     this.loadingGames = true;
-    this.route.queryParamMap.subscribe(params => {
-      this.editMode = params.get('editMode') === 'true';
+    this.route.data.subscribe(data => {
+      this.editMode = data['editMode'] === true;
+      
+      // Inicia o auto-refresh apenas no modo visualização
+      if (!this.editMode) {
+        this.startAutoRefresh();
+      }
     });
+    
+    this.loadGames();
+  }
+
+  ngOnDestroy() {
+    // Limpa o intervalo quando o componente é destruído
+    this.stopAutoRefresh();
+  }
+
+  private loadGames() {
     this.tournamentService.loadAllGames().subscribe({
       next: (games: Match[]) => {
         console.log('Primeiro jogo raw:', JSON.stringify(games[0]));
-  console.log('Campo date:', games[0]?.date, typeof games[0]?.date);
+        console.log('Campo date:', games[0]?.date, typeof games[0]?.date);
         this.games = games;
         this.gamesByDate = this.groupGamesByDate(games);
         this.loadingGames = false;
@@ -53,6 +76,32 @@ export class TournamentCalendarComponent implements OnInit {
         this.loadingGames = false;
       }
     });
+  }
+
+  private startAutoRefresh() {
+    // Limpa qualquer intervalo existente
+    this.stopAutoRefresh();
+    
+    // Configura novo intervalo
+    this.refreshInterval = setInterval(() => {
+      // Recarrega os dados sem mostrar o loading para não interferir na visualização
+      this.tournamentService.loadAllGames().subscribe({
+        next: (games: Match[]) => {
+          this.games = games;
+          this.gamesByDate = this.groupGamesByDate(games);
+        },
+        error: (err: any) => {
+          console.error('Erro no auto-refresh:', err);
+        }
+      });
+    }, this.REFRESH_INTERVAL_MS);
+  }
+
+  private stopAutoRefresh() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+      this.refreshInterval = null;
+    }
   }
 
   getTeamName(team?: Team | string): string {
@@ -323,5 +372,28 @@ export class TournamentCalendarComponent implements OnInit {
   private timeToMinutes(time: string): number {
     const [hours, minutes] = (time || '00:00').split(':').map(Number);
     return (Number.isFinite(hours) ? hours : 0) * 60 + (Number.isFinite(minutes) ? minutes : 0);
+  }
+
+  openClassificacaoModal(round: string) {
+    this.classificacaoRound = round;
+    this.showClassificacaoModal = true;
+    this.loadingClassificacao = true;
+    
+    this.tournamentService.getClassificacaoPorRound(round).subscribe({
+      next: (classificacao: Classificacao[]) => {
+        this.classificacao = classificacao;
+        this.loadingClassificacao = false;
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar classificação:', err);
+        this.loadingClassificacao = false;
+      }
+    });
+  }
+
+  closeClassificacaoModal() {
+    this.showClassificacaoModal = false;
+    this.classificacao = [];
+    this.classificacaoRound = '';
   }
 }

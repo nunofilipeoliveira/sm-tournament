@@ -17,9 +17,17 @@
   </div>
 
    <!-- ─── reset all ────────────────────────────────────────────────────────── -->
-  <div *ngIf="editMode">
-    
-    <button class="danger"    (click)="resetAll()">Reset all</button>
+  <div *ngIf="editMode" class="admin-toolbar">
+    <div class="admin-toolbar-content">
+      <div class="admin-toolbar-info">
+        <span class="admin-badge">⚙️ Modo Edição</span>
+        <span class="admin-toolbar-text">Está a gerir os jogos do torneio</span>
+      </div>
+      <button class="btn-reset-all" (click)="resetAll()">
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">Reset Completo</span>
+      </button>
+    </div>
   </div>
 
   <!-- ─── Schedule ───────────────────────────────────────────────────────── -->
@@ -129,7 +137,17 @@
                 </td>
 
                 <!-- Jornada (vista normal) -->
-                <td *ngIf="!editMode" class="col-round round-cell">{{ match.round || '-' }}</td>
+                <td *ngIf="!editMode" class="col-round round-cell">
+                  <div class="round-wrapper">
+                    <span class="round-label">{{ match.round || '-' }}</span>
+                    <button *ngIf="match.round" 
+                            class="btn-table-icon" 
+                            (click)="openClassificacaoModal(match.round)"
+                            title="Ver classificação">
+                      📊
+                    </button>
+                  </div>
+                </td>
 
                 <!-- Jornada (edição — status select) -->
                 <td *ngIf="editMode && editingRow[match.id]" class="col-round status-cell">
@@ -164,6 +182,105 @@
 
     </section>
   </div>
+
+<!-- Modal de Classificação -->
+<div *ngIf="showClassificacaoModal" class="modal-overlay" (click)="closeClassificacaoModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <!-- Header do Modal -->
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <span class="modal-icon">🏆</span>
+        Classificação - {{ classificacaoRound }}
+      </h2>
+      <button class="modal-close" (click)="closeClassificacaoModal()">✕</button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loadingClassificacao" class="modal-loading">
+      <div class="spinner"></div>
+      <span class="loading-text">A carregar classificação...</span>
+    </div>
+
+    <!-- Tabela de Classificação -->
+    <div *ngIf="!loadingClassificacao && classificacao.length > 0" class="classificacao-container">
+      <table class="classificacao-table">
+        <thead>
+          <tr>
+            <th class="col-pos">#</th>
+            <th class="col-equipa">Equipa</th>
+            <th class="col-stat">J</th>
+            <th class="col-stat">V</th>
+            <th class="col-stat">E</th>
+            <th class="col-stat">D</th>
+            <th class="col-stat">GM</th>
+            <th class="col-stat">GS</th>
+            <th class="col-stat">DG</th>
+            <th class="col-pts">Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of classificacao">
+            <td class="col-pos">{{ item.posicao }}º</td>
+            <td class="col-equipa">
+              <img *ngIf="item.teamId"
+                   [src]="'logos/clube_' + item.teamId + '.png'"
+                   onerror="this.onerror=null; this.src='logos/clube_1.png'"
+                   class="team-logo-mini" />
+              <span class="team-name-mini">{{ item.teamName }}</span>
+            </td>
+            <td class="col-stat">{{ item.jogos }}</td>
+            <td class="col-stat">{{ item.vitorias }}</td>
+            <td class="col-stat">{{ item.empates }}</td>
+            <td class="col-stat">{{ item.derrotas }}</td>
+            <td class="col-stat">{{ item.golosMarcados }}</td>
+            <td class="col-stat">{{ item.golosSofridos }}</td>
+            <td class="col-stat" [class.positive]="item.diferencaGolos > 0" [class.negative]="item.diferencaGolos < 0">
+              {{ item.diferencaGolos > 0 ? '+' : '' }}{{ item.diferencaGolos }}
+            </td>
+            <td class="col-pts"><strong>{{ item.pontos }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Legenda -->
+      <div class="classificacao-legend">
+        <div class="legend-item">
+          <span class="legend-label">J:</span> Jogos
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">V:</span> Vitórias
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">E:</span> Empates
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">D:</span> Derrotas
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">GM:</span> Golos Marcados
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">GS:</span> Golos Sofridos
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">DG:</span> Diferença de Golos
+        </div>
+        <div class="legend-item">
+          <span class="legend-label">Pts:</span> Pontos
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loadingClassificacao && classificacao.length === 0" class="modal-empty">
+      <span class="empty-icon">📊</span>
+      <p>Nenhuma classificação disponível para esta jornada.</p>
+      <small>Certifique-se de que existem jogos concluídos nesta jornada.</small>
+    </div>
+
+  </div>
+</div>
 
 <footer class="app-footer">
   <div class="footer-content">

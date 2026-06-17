@@ -28,3 +28,17 @@ export interface Tournament {
   matches: Match[];
   teams: Team[];
 }
+
+export interface Classificacao {
+  posicao: number;
+  teamId: number;
+  teamName: string;
+  jogos: number;
+  pontos: number;
+  vitorias: number;
+  empates: number;
+  derrotas: number;
+  golosMarcados: number;
+  golosSofridos: number;
+  diferencaGolos: number;
+}

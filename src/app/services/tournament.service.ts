@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Tournament, Match, Team } from '../models/tournament.model';
+import { Tournament, Match, Team, Classificacao } from '../models/tournament.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
@@ -35,6 +35,12 @@ export class TournamentService {
     const headers = { 'Content-Type': 'application/json' };
     const url = environment.apiUrl + "/sm/resetMatch";
     return this.http.put<boolean>(url, match, { headers });
+  }
+
+  getClassificacaoPorRound(round: string) {
+    const headers = { 'Content-Type': 'application/json' };
+    const url = environment.apiUrl + "/sm/getClassificacaoPorRound";
+    return this.http.put<Array<Classificacao>>(url, { round }, { headers });
   }
 
   

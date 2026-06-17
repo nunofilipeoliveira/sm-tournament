@@ -6,7 +6,7 @@ import { TournamentCalendarComponent } from './app/components/tournament-calenda
 
 const routes: Routes = [
   { path: '', component: TournamentCalendarComponent, data: { editMode: false } },
-  { path: 'admin', component: TournamentCalendarComponent, data: { editMode: true } },
+  { path: 'matches', component: TournamentCalendarComponent, data: { editMode: true } },
 ];
 
 bootstrapApplication(App, {
