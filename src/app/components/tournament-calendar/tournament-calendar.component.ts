@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TournamentService } from '../../services/tournament.service';
 import { AuthService } from '../../services/auth.service';
+import { WebSocketService } from '../../services/websocket.service';
 import { Match, Team, Classificacao } from '../../models/tournament.model';
 import { LoginComponent } from '../login/login.component';
 
@@ -30,20 +31,18 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
   tempStatus: { [id: number]: Match['status'] } = {};
 
   loadingGames = true;
-  private refreshInterval: any = null;
-  private readonly REFRESH_INTERVAL_MS = 5000; // 5 segundos
 
   // Modal de classificação
   showClassificacaoModal = false;
   classificacao: Classificacao[] = [];
   classificacaoRound = '';
   loadingClassificacao = false;
-  private classificacaoRefreshInterval: any = null;
 
   constructor(
     private tournamentService: TournamentService,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit() {
@@ -52,9 +51,9 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
     this.route.data.subscribe(data => {
       this.editMode = data['editMode'] === true;
       
-      // Inicia o auto-refresh apenas no modo visualização
+      // No modo visualização, usar WebSocket
       if (!this.editMode) {
-        this.startAutoRefresh();
+        this.setupWebSocket();
       }
     });
     
@@ -62,9 +61,45 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Limpa os intervalos quando o componente é destruído
-    this.stopAutoRefresh();
-    this.stopClassificacaoRefresh();
+    // Desconecta WebSocket
+    this.webSocketService.disconnect();
+  }
+
+  private setupWebSocket() {
+    console.log('🔌 Configurando WebSocket...');
+    
+    // Conectar ao WebSocket
+    this.webSocketService.connect();
+    
+    // Subscrever a updates gerais de jogos
+    this.webSocketService.onGamesUpdate().subscribe(() => {
+      console.log('🔄 Recarregando jogos via WebSocket (update geral)...');
+      this.loadGames();
+    });
+    
+    // Subscrever a updates de jogo individual
+    this.webSocketService.onGameUpdate().subscribe((game: Match) => {
+      console.log('🔄 Atualização de jogo individual via WebSocket:', game.id);
+      this.loadGames();
+    });
+    
+    // Subscrever a updates de classificação
+    this.webSocketService.onClassificacaoUpdate().subscribe(({ round, classificacao }) => {
+      console.log('📊 Atualização de classificação via WebSocket para round:', round);
+      // Se o modal está aberto para este round, atualizar
+      if (this.showClassificacaoModal && this.classificacaoRound === round) {
+        this.classificacao = classificacao;
+      }
+    });
+    
+    // Status de conexão
+    this.webSocketService.onConnectionStatus().subscribe((connected) => {
+      if (connected) {
+        console.log('✅ WebSocket conectado - atualizações em tempo real ativas');
+      } else {
+        console.log('⚠️ WebSocket desconectado - tentando reconectar...');
+      }
+    });
   }
 
   private loadGames() {
@@ -75,38 +110,17 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
         this.games = games;
         this.gamesByDate = this.groupGamesByDate(games);
         this.loadingGames = false;
+
+        // Se o modal de classificação estiver aberto, recarrega os dados
+        if (this.showClassificacaoModal && this.classificacaoRound) {
+          this.loadClassificacao(this.classificacaoRound);
+        }
       },
       error: (err: any) => {
         console.error(err);
         this.loadingGames = false;
       }
     });
-  }
-
-  private startAutoRefresh() {
-    // Limpa qualquer intervalo existente
-    this.stopAutoRefresh();
-    
-    // Configura novo intervalo
-    this.refreshInterval = setInterval(() => {
-      // Recarrega os dados sem mostrar o loading para não interferir na visualização
-      this.tournamentService.loadAllGames().subscribe({
-        next: (games: Match[]) => {
-          this.games = games;
-          this.gamesByDate = this.groupGamesByDate(games);
-        },
-        error: (err: any) => {
-          console.error('Erro no auto-refresh:', err);
-        }
-      });
-    }, this.REFRESH_INTERVAL_MS);
-  }
-
-  private stopAutoRefresh() {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-      this.refreshInterval = null;
-    }
   }
 
   getTeamName(team?: Team | string): string {
@@ -387,17 +401,13 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
     // Carregar classificação inicial
     this.loadClassificacao(round);
     
-    // Iniciar auto-refresh da classificação
-    this.startClassificacaoRefresh(round);
+    // WebSocket já está subscrito e vai atualizar automaticamente
   }
 
   closeClassificacaoModal() {
     this.showClassificacaoModal = false;
     this.classificacao = [];
     this.classificacaoRound = '';
-    
-    // Parar auto-refresh da classificação
-    this.stopClassificacaoRefresh();
   }
 
   private loadClassificacao(round: string) {
@@ -411,31 +421,6 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
         this.loadingClassificacao = false;
       }
     });
-  }
-
-  private startClassificacaoRefresh(round: string) {
-    // Limpa qualquer intervalo existente
-    this.stopClassificacaoRefresh();
-    
-    // Configura novo intervalo para atualizar classificação
-    this.classificacaoRefreshInterval = setInterval(() => {
-      // Recarrega classificação sem mostrar loading para não interferir na visualização
-      this.tournamentService.getClassificacaoPorRound(round).subscribe({
-        next: (classificacao: Classificacao[]) => {
-          this.classificacao = classificacao;
-        },
-        error: (err: any) => {
-          console.error('Erro no auto-refresh da classificação:', err);
-        }
-      });
-    }, this.REFRESH_INTERVAL_MS);
-  }
-
-  private stopClassificacaoRefresh() {
-    if (this.classificacaoRefreshInterval) {
-      clearInterval(this.classificacaoRefreshInterval);
-      this.classificacaoRefreshInterval = null;
-    }
   }
 
   isAuthenticated(): boolean {
