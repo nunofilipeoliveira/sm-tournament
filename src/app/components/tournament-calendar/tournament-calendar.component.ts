@@ -38,6 +38,7 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
   classificacao: Classificacao[] = [];
   classificacaoRound = '';
   loadingClassificacao = false;
+  private classificacaoRefreshInterval: any = null;
 
   constructor(
     private tournamentService: TournamentService,
@@ -61,8 +62,9 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Limpa o intervalo quando o componente é destruído
+    // Limpa os intervalos quando o componente é destruído
     this.stopAutoRefresh();
+    this.stopClassificacaoRefresh();
   }
 
   private loadGames() {
@@ -382,6 +384,23 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
     this.showClassificacaoModal = true;
     this.loadingClassificacao = true;
     
+    // Carregar classificação inicial
+    this.loadClassificacao(round);
+    
+    // Iniciar auto-refresh da classificação
+    this.startClassificacaoRefresh(round);
+  }
+
+  closeClassificacaoModal() {
+    this.showClassificacaoModal = false;
+    this.classificacao = [];
+    this.classificacaoRound = '';
+    
+    // Parar auto-refresh da classificação
+    this.stopClassificacaoRefresh();
+  }
+
+  private loadClassificacao(round: string) {
     this.tournamentService.getClassificacaoPorRound(round).subscribe({
       next: (classificacao: Classificacao[]) => {
         this.classificacao = classificacao;
@@ -394,10 +413,29 @@ export class TournamentCalendarComponent implements OnInit, OnDestroy {
     });
   }
 
-  closeClassificacaoModal() {
-    this.showClassificacaoModal = false;
-    this.classificacao = [];
-    this.classificacaoRound = '';
+  private startClassificacaoRefresh(round: string) {
+    // Limpa qualquer intervalo existente
+    this.stopClassificacaoRefresh();
+    
+    // Configura novo intervalo para atualizar classificação
+    this.classificacaoRefreshInterval = setInterval(() => {
+      // Recarrega classificação sem mostrar loading para não interferir na visualização
+      this.tournamentService.getClassificacaoPorRound(round).subscribe({
+        next: (classificacao: Classificacao[]) => {
+          this.classificacao = classificacao;
+        },
+        error: (err: any) => {
+          console.error('Erro no auto-refresh da classificação:', err);
+        }
+      });
+    }, this.REFRESH_INTERVAL_MS);
+  }
+
+  private stopClassificacaoRefresh() {
+    if (this.classificacaoRefreshInterval) {
+      clearInterval(this.classificacaoRefreshInterval);
+      this.classificacaoRefreshInterval = null;
+    }
   }
 
   isAuthenticated(): boolean {
