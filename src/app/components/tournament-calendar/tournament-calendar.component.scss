@@ -1172,6 +1172,7 @@ $color-danger:    $tsj-red;
     align-items: center;
     gap: 0.4rem;
     min-width: 100px;
+    position: relative;
   }
 
   .col-stat {
@@ -1212,6 +1213,17 @@ $color-danger:    $tsj-red;
     font-weight: 600;
     color: $color-text;
     line-height: 1.2;
+    flex: 1;
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $tsj-red;
+    flex-shrink: 0;
+    animation: blink 1s infinite;
   }
 }
 

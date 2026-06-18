@@ -41,4 +41,5 @@ export interface Classificacao {
   golosMarcados: number;
   golosSofridos: number;
   diferencaGolos: number;
+  hasLiveMatch?: boolean;
 }

@@ -240,6 +240,7 @@
                    onerror="this.onerror=null; this.src='logos/clube_1.png'"
                    class="team-logo-mini" />
               <span class="team-name-mini">{{ item.teamName }}</span>
+              <span class="live-dot" *ngIf="item.hasLiveMatch"></span>
             </td>
             <td class="col-stat">{{ item.jogos }}</td>
             <td class="col-stat">{{ item.vitorias }}</td>
