@@ -152,7 +152,7 @@
                 <td *ngIf="!editMode" class="col-round round-cell">
                   <div class="round-wrapper">
                     <span class="round-label">{{ match.round || '-' }}</span>
-                    <button *ngIf="match.round" 
+                    <button *ngIf="match.hasTable" 
                             class="btn-table-icon" 
                             (click)="openClassificacaoModal(match.round)"
                             title="Ver classificação">
